@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// User Schema
+model User {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+  name  String? // question mark indicates optional field
+  email String  @unique // Email is unique
+  password String // Password is required
+  posts Post[] // array of posts
+}
+
+model Post {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+  slug     String    @unique // slug is unique
+  title    String    // title is required
+  body     String    // body is required
+  author   User      @relation(fields: [authorId], references: [id]) // authorId is the field in the Post model that references the User model
+  authorId String    @db.ObjectId
+}
